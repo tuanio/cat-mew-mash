@@ -2,6 +2,7 @@ from flask import Flask, jsonify
 from flask_sqlalchemy import SQLAlchemy
 import os
 import shutil
+import random
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://pxhvltkppvygwu:040a51f1444c8cf0a3bcb5a19c79d649ed618388a9ff5aafb55c1ba96d927671@ec2-174-129-225-160.compute-1.amazonaws.com:5432/d47blt1hbc4qjj'
@@ -37,8 +38,11 @@ def get_tournament():
 	'''
 		lấy hai ảnh mèo có ranking thấp nhất để đọ 
 	'''
-	data = TournamentTable.query.order_by(TournamentTable.ranking.asc()).limit(2).all()
-	data = [dict(id=datum.id, path=datum.path) for datum in data]
+	maxn = TournamentTable.query.count()
+	get1 = TournamentTable.query.filter(TournamentTable.id == random.randint(1, maxn)).first()
+	get2 = TournamentTable.query.filter(TournamentTable.id == random.randint(1, maxn)).first()
+
+	data = [dict(id=datum.id, path=datum.path) for datum in [get1, get2]]
 	ret = dict(data=data)
 	return make_response(ret)
 
