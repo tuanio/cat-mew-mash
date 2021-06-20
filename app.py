@@ -5,6 +5,7 @@ import shutil
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://pxhvltkppvygwu:040a51f1444c8cf0a3bcb5a19c79d649ed618388a9ff5aafb55c1ba96d927671@ec2-174-129-225-160.compute-1.amazonaws.com:5432/d47blt1hbc4qjj'
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///cat.db'
 db = SQLAlchemy(app)
 
 class TournamentTable(db.Model):
@@ -57,7 +58,7 @@ def get_leaderboard():
 	'''
 		trả về bảng phong thần 
 	'''
-	data = TournamentTable.query.order_by(TournamentTable.ranking.desc()).all()
+	data = TournamentTable.query.order_by(TournamentTable.ranking.desc()).limit(10).all()
 	data = [dict(id=datum.id, path=datum.path, ranking=datum.ranking) for datum in data]
 	ret = dict(data=data)
 	return make_response(ret)
@@ -87,6 +88,8 @@ def init_db(key):
 		for source, dirs, files in os.walk('images'):
 			for file in files:
 				filename = os.path.join(source, file)
+				if 'jpg' not in filename and 'jpeg' not in filename:
+					os.remove(filename)
 				img_id = file.split('.')[0]
 				ins = TournamentTable(path=filename, ranking=0)
 				db.session.add(ins)
