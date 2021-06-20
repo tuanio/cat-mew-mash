@@ -4,7 +4,7 @@ import os
 import shutil
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///cat.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://pxhvltkppvygwu:040a51f1444c8cf0a3bcb5a19c79d649ed618388a9ff5aafb55c1ba96d927671@ec2-174-129-225-160.compute-1.amazonaws.com:5432/d47blt1hbc4qjj'
 db = SQLAlchemy(app)
 
 class TournamentTable(db.Model):
