@@ -1,0 +1,7 @@
+- cần có thư mục ảnh
+- cần có id của ảnh trong db 
+- api này sẽ load 2 bức ảnh có ranking khác nhau nhiều nhất là 2 
+-
+
+- đổi tên ảnh thành id 
+- gắn id vào path
