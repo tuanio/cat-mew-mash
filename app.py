@@ -58,7 +58,7 @@ def get_leaderboard():
 		trả về bảng phong thần 
 	'''
 	data = TournamentTable.query.order_by(TournamentTable.ranking.desc()).all()
-	data = [dict(id=datum.id, ranking=datum.ranking) for datum in data]
+	data = [dict(id=datum.id, path=datum.path, ranking=datum.ranking) for datum in data]
 	ret = dict(data=data)
 	return make_response(ret)
 
