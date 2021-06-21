@@ -67,6 +67,15 @@ def get_leaderboard():
 	ret = dict(data=data)
 	return make_response(ret)
 
+@app.route('/get-all-vote')
+def get_all_vote():
+	'''
+	trả về tổng số vote
+	'''
+	data = sum([datum.ranking for datum in db.session.query(TournamentTable.ranking).all()])
+	ret = dict(data=data)
+	return make_response(ret)
+
 @app.route('/init-db/<key>')
 def init_db(key):
 	'''
