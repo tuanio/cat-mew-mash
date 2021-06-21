@@ -16,6 +16,14 @@ class TournamentTable(db.Model):
 
 	def __repr__(self):
 		return '<TournamentTable(id: %d, path: %s, ranking: %d)>' % (self.id, self.path, self.ranking)
+		
+class CatStatistic(db.Model):
+	id = db.Column(db.Integer, primary_key=True)
+	total_vote = db.Column(db.Integer, default=0)
+	total_cat = db.Column(db.Integer, default=0)
+
+	def __repr__(self):
+		return '<CatStatistic(id: %d, total_vote: %d, total_cat: %d)>' % (self.id, self.total_vote, self.total_cat)
 
 def make_response(data={}, status=200):
     '''
@@ -30,7 +38,7 @@ def make_response(data={}, status=200):
 
 @app.route('/')
 def index():
-	data = dict(data='this is cat-mash page')
+	data = dict(data='this is cat tournament api')
 	return make_response(data)
 
 @app.route('/get-tournament')
@@ -38,7 +46,10 @@ def get_tournament():
 	'''
 		lấy hai ảnh mèo có ranking thấp nhất để đọ 
 	'''
-	maxn = TournamentTable.query.count()
+	# lấy tổng số ảnh mèo
+	maxn = CatStatistic.query.first().total_cat
+	
+	# query random ảnh mèo có id từ 1 đến maxn
 	get1 = TournamentTable.query.filter(TournamentTable.id == random.randint(1, maxn)).first()
 	get2 = TournamentTable.query.filter(TournamentTable.id == random.randint(1, maxn)).first()
 
@@ -53,6 +64,10 @@ def vote(cat_id):
 	'''
 	data = TournamentTable.query.filter(TournamentTable.id == cat_id).first()
 	data.ranking += 1
+	
+	statistic = CatStatistic.query.first()
+	statistic.total_vote += 1
+
 	db.session.commit()
 	ret = dict(data=f'vote done, ranking of {data.id} change from {data.ranking - 1} to {data.ranking}')
 	return make_response(ret)
@@ -72,7 +87,7 @@ def get_all_vote():
 	'''
 	trả về tổng số vote
 	'''
-	data = sum([datum.ranking for datum in db.session.query(TournamentTable.ranking).all()])
+	data = CatStatistic.query.first().total_vote
 	ret = dict(data=data)
 	return make_response(ret)
 
@@ -81,7 +96,9 @@ def init_db(key):
 	'''
 		thực hiện gán ảnh với id vào db và reset ranking 
 	'''
-	if key == 'tuanio':
+	with open('authentication.txt', 'r') as f:
+		secret_key = f.read()
+	if key == secret_key:
 
 		# assign image
 		# img_id = 1
@@ -98,6 +115,7 @@ def init_db(key):
 		db.drop_all()
 		db.create_all()
 
+		total = 0
 		for source, dirs, files in os.walk('images'):
 			for file in files:
 				filename = os.path.join(source, file)
@@ -105,7 +123,12 @@ def init_db(key):
 					os.remove(filename)
 				img_id = file.split('.')[0]
 				ins = TournamentTable(path=filename, ranking=0)
+				total += 1
 				db.session.add(ins)
+
+		# thêm vào bảng statistic số lượng anhr mèo
+		db.session.add(CatStatistic(total_cat=total))
+
 		db.session.commit()
 		return make_response({'data': 'init db successfully'})
 	return make_response({'data': 'route not found'})
