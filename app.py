@@ -98,7 +98,7 @@ def init_db(key):
 	'''
 	with open('authentication.txt', 'r') as f:
 		secret_key = f.read()
-	if key == secret_key:
+	if key != '' and key == secret_key:
 
 		# assign image
 		# img_id = 1
