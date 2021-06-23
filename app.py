@@ -6,7 +6,7 @@ import random
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://zfktdqzvplexwj:7e0c4974fb851b5ec66d99c7c437dd82087936e3a46163393b95ca80cd847916@ec2-52-202-152-4.compute-1.amazonaws.com:5432/db93eorvktnrsm'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://zfktdqzvplexwj:7e0c4974fb851b5ec66d99c7c437dd82087936e3a46163393b95ca80cd847916@ec2-52-202-152-4.compute-1.amazonaws.com:5432/db93eorvktnrsm'
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///cat.db'
 db = SQLAlchemy(app)
 
